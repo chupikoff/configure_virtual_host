@@ -1,0 +1,72 @@
+---
+- name: Configure remote host
+  hosts: staging_servers
+  become: true
+  tasks:
+    - name: Create user hes
+      user:
+        name: hes
+        state: present
+    
+    - name: Add hes to wheel group
+      user:
+        name: hes
+        groups: wheel
+        append: yes
+    
+    - name: Disable SELinux
+      lineinfile:
+        path: /etc/selinux/config
+        regexp: '^SELINUX='
+        line: 'SELINUX=disabled'
+    
+    - name: Allow hes to run sudo without password
+      lineinfile:
+        path: /etc/sudoers
+        line: 'hes        ALL=(ALL)       NOPASSWD: ALL'
+    
+    - name: Create SSH directory for hes
+      file:
+        path: /home/hes/.ssh
+        state: directory
+        owner: hes
+        group: hes
+        mode: '0700'
+    
+    - name: Download authorized_keys file for hes
+      get_url:
+        url: https://raw.githubusercontent.com/chupikoff/install/main/authorized_keys
+        dest: /home/hes/.ssh/authorized_keys
+        owner: hes
+        group: hes
+        mode: '0600'
+    
+    - name: Change SSH configuration
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: 'PasswordAuthentication no'
+    
+    - name: Change SSH listen address
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^ListenAddress'
+        line: 'ListenAddress 192.168.88.241'
+    
+    - name: Disable root login via SSH
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin no'
+    
+    - name: Add alias to hes's .bashrc
+      lineinfile:
+        path: /home/hes/.bashrc
+        line: "alias s='sudo su -'"
+        owner: hes
+        group: hes
+    
+    - name: Reboot server
+      reboot:
+        reboot_timeout: 0
+      check_mode: no
