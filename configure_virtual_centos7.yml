@@ -1,6 +1,6 @@
 ---
 - name: Configure remote host
-  hosts: staging_servers
+  hosts: centos
   become: true
   tasks:
     - name: Create user hes
