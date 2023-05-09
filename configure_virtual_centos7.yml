@@ -58,6 +58,11 @@
         path: /etc/ssh/sshd_config
         regexp: '^PermitRootLogin'
         line: 'PermitRootLogin no'
+
+    - name: Restart SSH service
+      service:
+        name: sshd
+        state: restarted
     
     - name: Add alias to hes's .bashrc
       lineinfile:
