@@ -1,3 +1,0 @@
-[virtual]
-centos ansible_host=home.chupikoff.com.ua
-
