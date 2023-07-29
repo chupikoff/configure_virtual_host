@@ -32,10 +32,17 @@
         owner: hes
         group: hes
         mode: '0700'
+
+    - name: Add PS1 to /etc/bashrc
+      lineinfile:
+        path: /etc/bashrc
+        regexp: '^export PS1='
+        line: 'export PS1="\[\e[32m\][\u@\H]-\[\e[34m\][\d \t]-\[\e[33m\][\w]\\$\[\e[0m\] "'
+        insertafter: EOF
     
     - name: Download authorized_keys file for hes
       get_url:
-        url: https://raw.githubusercontent.com/chupikoff/public-keys/main/authorized_keys_virtual
+        url: https://raw.githubusercontent.com/chupikoff/conf/main/authorized_keys
         dest: /home/hes/.ssh/authorized_keys
         owner: hes
         group: hes
