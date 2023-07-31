@@ -7,10 +7,21 @@
       user:
         name: hes
         state: present
+
+    - name: Create user bnv
+      user:
+        name: bnv
+        state: present
     
     - name: Add hes to wheel group
       user:
         name: hes
+        groups: wheel
+        append: yes
+
+    - name: Add bnv to wheel group
+      user:
+        name: bnv
         groups: wheel
         append: yes
     
@@ -24,10 +35,23 @@
       lineinfile:
         path: /etc/sudoers
         line: 'hes        ALL=(ALL)       NOPASSWD: ALL'
+
+    - name: Allow bnv to run sudo without password
+      lineinfile:
+        path: /etc/sudoers
+        line: 'bnv        ALL=(ALL)       NOPASSWD: ALL'
     
     - name: Create SSH directory for hes
       file:
         path: /home/hes/.ssh
+        state: directory
+        owner: hes
+        group: hes
+        mode: '0700'
+
+    - name: Create SSH directory for bnv
+      file:
+        path: /home/bnv/.ssh
         state: directory
         owner: hes
         group: hes
@@ -44,6 +68,14 @@
       get_url:
         url: https://raw.githubusercontent.com/chupikoff/conf/main/authorized_keys
         dest: /home/hes/.ssh/authorized_keys
+        owner: hes
+        group: hes
+        mode: '0600'
+
+    - name: Download authorized_keys file for bnv
+      get_url:
+        url: https://raw.githubusercontent.com/chupikoff/conf/main/authorized_keys_bnv
+        dest: /home/bnv/.ssh/authorized_keys
         owner: hes
         group: hes
         mode: '0600'
@@ -68,6 +100,13 @@
     - name: Add alias to hes's .bashrc
       lineinfile:
         path: /home/hes/.bashrc
+        line: "alias s='sudo su -'"
+        owner: hes
+        group: hes
+
+    - name: Add alias to bnv's .bashrc
+      lineinfile:
+        path: /home/bnv/.bashrc
         line: "alias s='sudo su -'"
         owner: hes
         group: hes
