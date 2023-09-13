@@ -42,7 +42,7 @@
     
     - name: Download authorized_keys file for hes
       get_url:
-        url: https://raw.githubusercontent.com/chupikoff/conf/main/authorized_keys
+        url: https://raw.githubusercontent.com/chupikoff/public-keys/main/authorized_keys_virtual
         dest: /home/hes/.ssh/authorized_keys
         owner: hes
         group: hes
